@@ -5,31 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Inorgánica Interactiva · Explorador de materiales</title>
   <meta name="description" content="Explore materiales inorgánicos de Materials Project: filtre por bandgap, sistema cristalino y estabilidad, y gire su estructura cristalina en 3D.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3l11 6v14l-11 6-11-6V9z' fill='none' stroke='%230f766e' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M16 16l11-7M16 16L5 9M16 16v13' stroke='%230f766e' stroke-width='2'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#f3efe6" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151b1c" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3l11 6v14l-11 6-11-6V9z' fill='none' stroke='%23a8441f' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M16 16l11-7M16 16L5 9M16 16v13' stroke='%23a8441f' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
+<a class="saltar" href="#resultados">Saltar a los resultados</a>
 
 <header class="top">
   <div class="marca">
-    <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
-      <path d="M16 3l11 6v14l-11 6-11-6V9z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
-      <path d="M16 16l11-7M16 16L5 9M16 16v13" stroke="currentColor" stroke-width="1.8"/>
-      <circle cx="16" cy="16" r="2.6" fill="currentColor"/>
+    <svg viewBox="0 0 32 32" width="40" height="40" aria-hidden="true">
+      <path d="M16 3l11 6v14l-11 6-11-6V9z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M16 16l11-7M16 16L5 9M16 16v13" stroke="currentColor" stroke-width="1.6"/>
+      <circle cx="16" cy="16" r="2.8" fill="currentColor"/>
+      <circle cx="16" cy="3" r="1.8" fill="currentColor"/><circle cx="27" cy="9" r="1.8" fill="currentColor"/><circle cx="5" cy="9" r="1.8" fill="currentColor"/>
     </svg>
     <div>
-      <h1>Inorgánica Interactiva</h1>
-      <p>Explorador de materiales</p>
+      <p class="sobre">Química inorgánica · Atlas de cristales</p>
+      <h1>Inorgánica <em>Interactiva</em></h1>
     </div>
   </div>
-  <button type="button" class="btn" id="btn-guia">Guía rápida</button>
+  <button type="button" class="btn btn-sec" id="btn-guia">Guía rápida</button>
 </header>
 
 <div class="aviso" role="note">
-  <strong>⚠ Los bandgap son cálculos DFT, no mediciones.</strong>
-  Los valores de Materials Project (funcional PBE) suelen <em>subestimar</em> el gap experimental, a veces por mucho.
-  Úselos para comparar y filtrar, no como dato final.
-  <button type="button" class="enlace" id="btn-guia-2">Ver ejemplos</button>
+  <span class="aviso-ico" aria-hidden="true">!</span>
+  <p>
+    <strong>El bandgap es un cálculo DFT, no una medición.</strong>
+    <span class="aviso-det">Los valores de Materials Project (funcional PBE) suelen subestimar el gap experimental, a veces por mucho. Úselos para comparar, no como dato final.</span>
+    <button type="button" class="enlace" id="btn-guia-2">Ver ejemplos</button>
+  </p>
 </div>
 <div class="aviso aviso-ejemplo" id="aviso-ejemplo" hidden>
   <strong>Datos de ejemplo.</strong>
@@ -96,14 +102,19 @@
   </details>
 
   <!-- RESULTADOS -->
-  <section class="resultados" aria-live="polite">
-    <div class="enc-res">
-      <h2><span id="n-res">0</span> materiales</h2>
+  <section class="resultados" id="resultados" tabindex="-1" aria-labelledby="t-res">
+    <div class="enc-res" aria-live="polite" aria-atomic="true">
+      <h2 id="t-res"><span id="n-res">0</span> materiales</h2>
       <p class="nota" id="nota-res"></p>
     </div>
     <div class="histo-wrap">
       <div class="histo" id="histo" role="img" aria-label="Distribución del bandgap de los resultados"></div>
       <div class="histo-eje"><span>0 eV</span><span id="histo-max"></span></div>
+      <ul class="clases" aria-label="Clasificación por bandgap">
+        <li><i class="k-c"></i>Conductor (&lt; 0,1 eV)</li>
+        <li><i class="k-s"></i>Semiconductor (0,1 a 3 eV)</li>
+        <li><i class="k-a"></i>Aislante (&gt; 3 eV)</li>
+      </ul>
     </div>
     <div class="tabla-wrap">
       <table id="tabla">

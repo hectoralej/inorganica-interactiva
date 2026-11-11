@@ -7,6 +7,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const fmtF = (f) => esc(f).replace(/(\d+\.?\d*)/g, '<sub>$1</sub>');
+  const colorGap = (g) => (g < 0.1 ? 'var(--c-cond)' : g < 3 ? 'var(--c-semi)' : 'var(--c-aisl)');
   const num = (v, d = 2) => (v == null ? '—' : v.toLocaleString('es', { minimumFractionDigits: d, maximumFractionDigits: d }));
 
   const SIST = {
@@ -136,9 +137,9 @@
     el.tabla.parentElement.hidden = visibles.length === 0;
     const filas = visibles.slice(0, mostrados);
     el.tbody.innerHTML = filas.map((m) => `
-      <tr tabindex="0" data-id="${esc(m.id)}" aria-selected="${m.id === seleccionado}">
-        <td class="f">${fmtF(m.f)}</td>
-        <td class="num">${num(m.g)}</td>
+      <tr data-id="${esc(m.id)}" class="${m.id === seleccionado ? 'sel' : ''}">
+        <td class="f"><button type="button" class="fila-btn" ${m.id === seleccionado ? 'aria-current="true"' : ''} aria-label="Ver ${esc(m.f)}, ${esc(m.id)}">${fmtF(m.f)}</button></td>
+        <td class="num"><span class="gcel"><span>${num(m.g)}</span><span class="gbar" aria-hidden="true"><i style="--w:${Math.min(100, (m.g / GMAX) * 100)}%;--c:${colorGap(m.g)}"></i></span></span></td>
         <td>${m.d === 1 ? 'Directo' : m.d === 0 ? 'Indirecto' : '—'}</td>
         <td>${SIST[m.cs] || esc(m.cs)}</td>
         <td>${esc(m.sg || '—')}</td>
@@ -157,7 +158,10 @@
     const cuenta = new Array(nb).fill(0);
     for (const m of visibles) cuenta[Math.min(nb - 1, Math.floor((m.g || 0) / w))]++;
     const mx = Math.max(1, ...cuenta);
-    el.histo.innerHTML = cuenta.map((c, i) => `<div style="height:${(c / mx) * 100}%" title="${num(i * w, 1)} a ${num((i + 1) * w, 1)} eV: ${c}"></div>`).join('');
+    el.histo.innerHTML = cuenta.map((c, i) => `<div style="height:${(c / mx) * 100}%;--c:${colorGap((i + 0.5) * w)}" title="${num(i * w, 1)} a ${num((i + 1) * w, 1)} eV: ${c}"></div>`).join('');
+    const clases = [0, 0, 0];
+    for (const m of visibles) clases[m.g < 0.1 ? 0 : m.g < 3 ? 1 : 2]++;
+    el.histo.setAttribute('aria-label', `Distribución del bandgap: ${clases[0]} conductores, ${clases[1]} semiconductores y ${clases[2]} aislantes`);
   }
 
   /* ---------- Eventos de filtros ---------- */
@@ -196,12 +200,16 @@
     ordenar(); pintar();
   });
 
+  // Clic en cualquier parte de la fila; con teclado se usa el botón de la fórmula.
   el.tbody.addEventListener('click', (e) => { const tr = e.target.closest('tr'); if (tr) abrir(tr.dataset.id); });
-  el.tbody.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
-    const tr = e.target.closest('tr'); if (!tr) return;
-    e.preventDefault(); abrir(tr.dataset.id);
-  });
+  function marcarFila(id) {
+    el.tbody.querySelectorAll('tr').forEach((tr) => {
+      const on = tr.dataset.id === id;
+      tr.classList.toggle('sel', on);
+      const b = tr.querySelector('.fila-btn');
+      if (on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+    });
+  }
 
   /* ---------- Estructuras (carga diferida) ---------- */
   let promEst = null;
@@ -290,7 +298,8 @@
   function crearVisor() {
     if (visor) return visor;
     if (!window.$3Dmol) return null;
-    visor = window.$3Dmol.createViewer($('#visor'), { backgroundColor: '#f1f3f6', antialias: true });
+    visor = window.$3Dmol.createViewer($('#visor'), { antialias: true });
+    visor.setBackgroundColor(0xffffff, 0); // transparente: se ve el fondo del tema (claro u oscuro)
     return visor;
   }
 
@@ -335,7 +344,7 @@
       for (let i = 0; i < 8; i++) for (const bit of [1, 2, 4]) {
         if (i & bit) continue;
         const a = P[i], b = P[i | bit];
-        v.addCylinder({ start: { x: a[0], y: a[1], z: a[2] }, end: { x: b[0], y: b[1], z: b[2] }, radius: 0.05, color: '#0f766e', fromCap: 1, toCap: 1 });
+        v.addCylinder({ start: { x: a[0], y: a[1], z: a[2] }, end: { x: b[0], y: b[1], z: b[2] }, radius: 0.05, color: '#c0643a', fromCap: 1, toCap: 1 });
       }
     }
     v.zoomTo(); v.rotate(25, 'x'); v.rotate(-35, 'y'); v.render(); // vista oblicua: de frente se ven las capas apiladas
@@ -371,7 +380,7 @@
     const m = BY_ID.get(id);
     if (!m) return;
     seleccionado = id;
-    el.tbody.querySelectorAll('tr').forEach((tr) => tr.setAttribute('aria-selected', tr.dataset.id === id));
+    marcarFila(id);
     $('#det-vacio').hidden = true; $('#det-cont').hidden = false;
     $('#detalle').classList.add('abierto');
     if (!desdeHash) history.replaceState(null, '', '#' + encodeURIComponent(id));
@@ -379,9 +388,9 @@
     $('#d-formula').innerHTML = fmtF(m.f);
     $('#d-sub').textContent = `${SIST[m.cs] || m.cs} · grupo espacial ${m.sg || '—'}`;
     const badges = [
-      `<span class="chip" style="cursor:default">${claseGap(m.g)}</span>`,
-      m.d === 1 ? '<span class="chip" style="cursor:default">gap directo</span>' : m.d === 0 ? '<span class="chip" style="cursor:default">gap indirecto</span>' : '',
-      `<span class="chip" style="cursor:default">${m.ex ? 'observado experimentalmente' : 'solo predicho (teórico)'}</span>`,
+      `<span class="chip">${claseGap(m.g)}</span>`,
+      m.d === 1 ? '<span class="chip">gap directo</span>' : m.d === 0 ? '<span class="chip">gap indirecto</span>' : '',
+      `<span class="chip">${m.ex ? 'observado experimentalmente' : 'solo predicho (teórico)'}</span>`,
     ];
     $('#d-badges').innerHTML = badges.join('');
 
@@ -429,8 +438,10 @@
     if (visor) visor.spin(false);
     c.spin.checked = false;
     if (matchMedia('(min-width: 1300px)').matches) return;
+    const previo = el.tbody.querySelector('tr.sel .fila-btn');
     seleccionado = null;
-    el.tbody.querySelectorAll('tr').forEach((tr) => tr.setAttribute('aria-selected', 'false'));
+    marcarFila(null);
+    if (previo && document.body.contains(previo)) previo.focus(); // devolver el foco a la fila de origen
     history.replaceState(null, '', location.pathname + location.search);
   }
   $('#btn-cerrar').addEventListener('click', cerrar);
