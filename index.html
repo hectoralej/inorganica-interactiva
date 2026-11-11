@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inorgánica Interactiva · Explorador de materiales</title>
+  <meta name="description" content="Explore materiales inorgánicos de Materials Project: filtre por bandgap, sistema cristalino y estabilidad, y gire su estructura cristalina en 3D.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 3l11 6v14l-11 6-11-6V9z' fill='none' stroke='%230f766e' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cpath d='M16 16l11-7M16 16L5 9M16 16v13' stroke='%230f766e' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="marca">
+    <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
+      <path d="M16 3l11 6v14l-11 6-11-6V9z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M16 16l11-7M16 16L5 9M16 16v13" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="16" cy="16" r="2.6" fill="currentColor"/>
+    </svg>
+    <div>
+      <h1>Inorgánica Interactiva</h1>
+      <p>Explorador de materiales</p>
+    </div>
+  </div>
+  <button type="button" class="btn" id="btn-guia">Guía rápida</button>
+</header>
+
+<div class="aviso" role="note">
+  <strong>⚠ Los bandgap son cálculos DFT, no mediciones.</strong>
+  Los valores de Materials Project (funcional PBE) suelen <em>subestimar</em> el gap experimental, a veces por mucho.
+  Úselos para comparar y filtrar, no como dato final.
+  <button type="button" class="enlace" id="btn-guia-2">Ver ejemplos</button>
+</div>
+<div class="aviso aviso-ejemplo" id="aviso-ejemplo" hidden>
+  <strong>Datos de ejemplo.</strong>
+  Esta versión muestra solo <span id="n-ejemplo">10</span> materiales escritos a mano y con valores aproximados.
+  Los datos reales se generan con <code>scripts/generar_datos.py</code> (ver README).
+</div>
+
+<main class="layout">
+
+  <!-- FILTROS -->
+  <details class="filtros" id="filtros" open>
+    <summary>Filtros</summary>
+    <form id="form-filtros" autocomplete="off" onsubmit="return false">
+
+      <fieldset class="presets">
+        <legend>Atajos</legend>
+        <div class="chips" id="presets"></div>
+      </fieldset>
+
+      <label class="campo">Fórmula o id
+        <input type="search" id="f-q" placeholder="ej. SrTiO3, mp-5229">
+      </label>
+      <label class="campo">Debe contener elementos
+        <input type="text" id="f-inc" placeholder="ej. Ti, O">
+      </label>
+      <label class="campo">Excluir elementos
+        <input type="text" id="f-exc" placeholder="ej. Pb, Cd">
+      </label>
+
+      <div class="campo">
+        <span class="etiqueta">Bandgap (eV)</span>
+        <div class="rango">
+          <input type="range" id="f-gmin" min="0" max="10" step="0.1" value="0" aria-label="Bandgap mínimo">
+          <input type="range" id="f-gmax" min="0" max="10" step="0.1" value="10" aria-label="Bandgap máximo">
+        </div>
+        <output id="o-gap" class="valor"></output>
+      </div>
+
+      <label class="campo">Tipo de gap
+        <select id="f-tipo">
+          <option value="any">Cualquiera</option>
+          <option value="1">Directo</option>
+          <option value="0">Indirecto</option>
+        </select>
+      </label>
+
+      <div class="campo">
+        <span class="etiqueta">Energía sobre el hull máxima (eV/átomo)</span>
+        <input type="range" id="f-hull" min="0" max="0.1" step="0.005" value="0.1" aria-label="Energía sobre el hull máxima">
+        <output id="o-hull" class="valor"></output>
+      </div>
+
+      <fieldset class="sistemas">
+        <legend>Sistema cristalino</legend>
+        <div id="f-sist"></div>
+      </fieldset>
+
+      <label class="check">
+        <input type="checkbox" id="f-exp"> Solo materiales observados experimentalmente
+      </label>
+
+      <button type="button" class="btn btn-sec" id="btn-reset">Restablecer filtros</button>
+    </form>
+  </details>
+
+  <!-- RESULTADOS -->
+  <section class="resultados" aria-live="polite">
+    <div class="enc-res">
+      <h2><span id="n-res">0</span> materiales</h2>
+      <p class="nota" id="nota-res"></p>
+    </div>
+    <div class="histo-wrap">
+      <div class="histo" id="histo" role="img" aria-label="Distribución del bandgap de los resultados"></div>
+      <div class="histo-eje"><span>0 eV</span><span id="histo-max"></span></div>
+    </div>
+    <div class="tabla-wrap">
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th><button type="button" data-k="f">Fórmula</button></th>
+            <th class="num"><button type="button" data-k="g">Bandgap (eV)</button></th>
+            <th><button type="button" data-k="d">Tipo</button></th>
+            <th><button type="button" data-k="cs">Sistema</button></th>
+            <th><button type="button" data-k="sg">Grupo esp.</button></th>
+            <th class="num"><button type="button" data-k="eh">E hull (eV)</button></th>
+            <th><button type="button" data-k="ex">Origen</button></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="mas"><button type="button" class="btn btn-sec" id="btn-mas" hidden>Mostrar más</button></div>
+    <p class="vacio" id="vacio" hidden>Ningún material cumple esos filtros. Pruebe ampliar el rango de bandgap o quitar algún elemento.</p>
+  </section>
+
+  <!-- DETALLE -->
+  <aside class="detalle" id="detalle" aria-label="Detalle del material">
+    <div class="det-vacio" id="det-vacio">
+      <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M32 6l22 12v28L32 58 10 46V18z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><path d="M32 32l22-14M32 32L10 18M32 32v26" stroke="currentColor" stroke-width="2"/></svg>
+      <p>Elija un material de la tabla para ver y girar su estructura cristalina.</p>
+    </div>
+    <div class="det-cont" id="det-cont" hidden>
+      <div class="det-top">
+        <div>
+          <h2 id="d-formula"></h2>
+          <p class="sub" id="d-sub"></p>
+        </div>
+        <button type="button" class="btn btn-icono" id="btn-cerrar" aria-label="Cerrar detalle">✕</button>
+      </div>
+
+      <div class="visor-wrap">
+        <div id="visor" class="visor" role="img" aria-label="Estructura cristalina en 3D. Arrastre para girar."></div>
+        <p class="visor-msg" id="visor-msg" hidden></p>
+      </div>
+
+      <div class="controles">
+        <label>Vista
+          <select id="c-estilo">
+            <option value="bolas">Bolas y palitos</option>
+            <option value="compacto">Empaquetamiento (esferas)</option>
+            <option value="palitos">Solo enlaces</option>
+          </select>
+        </label>
+        <label>Celdas
+          <select id="c-super">
+            <option value="1">1 × 1 × 1</option>
+            <option value="2">2 × 2 × 2</option>
+            <option value="3">3 × 3 × 3</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="c-celda" checked> Mostrar celda</label>
+        <label class="check"><input type="checkbox" id="c-spin"> Girar solo</label>
+      </div>
+      <div class="leyenda" id="d-leyenda"></div>
+      <p class="nota" id="d-atomos"></p>
+
+      <div class="chips" id="d-badges"></div>
+
+      <dl class="datos" id="d-datos"></dl>
+
+      <div class="explica" id="d-explica"></div>
+
+      <div class="acciones">
+        <a class="btn" id="d-mp" target="_blank" rel="noopener" hidden>Ver en Materials Project ↗</a>
+        <button type="button" class="btn btn-sec" id="btn-cif">Descargar CIF</button>
+        <button type="button" class="btn btn-sec" id="btn-enlace">Copiar enlace</button>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<footer class="pie">
+  <p>
+    Datos: <a href="https://next-gen.materialsproject.org" target="_blank" rel="noopener">Materials Project</a>
+    (Jain et al., <em>APL Materials</em> 1, 011002, 2013), licencia CC BY 4.0.
+    <span id="pie-datos"></span>
+    Visor: <a href="https://3dmol.csb.pitt.edu" target="_blank" rel="noopener">3Dmol.js</a>.
+  </p>
+  <p>Proyecto estudiantil para el curso de Química Inorgánica. Recurso educativo, no sustituye la literatura primaria.</p>
+</footer>
+
+<dialog id="guia">
+  <form method="dialog" class="guia-cab">
+    <h2>Guía rápida</h2>
+    <button class="btn btn-icono" aria-label="Cerrar">✕</button>
+  </form>
+  <div class="guia-cuerpo">
+    <h3>Bandgap (Eg)</h3>
+    <p>Es la diferencia de energía entre la banda de valencia (llena) y la de conducción (vacía). Un gap cercano a 0 sugiere un conductor; entre unas décimas y ~3 eV, un semiconductor; mayor que ~3 eV, un aislante o material de gap ancho. Determina qué luz absorbe el material y, por tanto, su color y sus usos (celdas solares, LED, catálisis fotoinducida).</p>
+
+    <h3 id="g-dft">⚠ Los valores son cálculos DFT</h3>
+    <p>Materials Project calcula el gap con DFT (aproximación GGA/PBE), un método que <strong>subestima sistemáticamente</strong> el gap. Compare con los valores experimentales aproximados:</p>
+    <table class="mini">
+      <thead><tr><th>Material</th><th class="num">Eg DFT (PBE), eV</th><th class="num">Eg experimental, eV</th></tr></thead>
+      <tbody>
+        <tr><td>Si</td><td class="num">≈ 0,6</td><td class="num">≈ 1,1</td></tr>
+        <tr><td>GaAs</td><td class="num">≈ 0,2</td><td class="num">≈ 1,4</td></tr>
+        <tr><td>ZnO</td><td class="num">≈ 0,7</td><td class="num">≈ 3,3</td></tr>
+        <tr><td>NaCl</td><td class="num">≈ 5,0</td><td class="num">≈ 8,5</td></tr>
+      </tbody>
+    </table>
+    <p>La <em>tendencia</em> entre materiales suele ser útil, pero el valor absoluto no. Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
+
+    <h3>Energía sobre el hull (E hull)</h3>
+    <p>Mide cuánta energía por átomo está por encima de la combinación más estable de las fases competidoras. 0 eV significa que el material es termodinámicamente estable; valores pequeños (hasta unas pocas decenas de meV) pueden ser metaestables y sintetizables.</p>
+
+    <h3>Sistema cristalino y grupo espacial</h3>
+    <p>El sistema (cúbico, tetragonal, hexagonal…) lo define la forma de la celda unitaria. El grupo espacial describe además todas las simetrías del cristal. La celda que verá es la <em>convencional</em>: los átomos de vértices y caras se comparten con celdas vecinas.</p>
+
+    <h3>Origen: experimental o teórico</h3>
+    <p>«Experimental» indica que la estructura tiene un registro en bases de datos de cristales medidos (ICSD). «Teórico» significa que solo se ha predicho por cálculo, aún sin síntesis reportada en esas bases.</p>
+
+    <h3>Cómo usarlo</h3>
+    <ol>
+      <li>Pruebe un atajo (por ejemplo, <em>Candidatos fotovoltaicos</em>) o ajuste los filtros.</li>
+      <li>Haga clic en una fila para ver la estructura. Arrastre para girar, use la rueda o dos dedos para acercar.</li>
+      <li>Cambie a la vista de <em>Empaquetamiento</em> para ver cómo llenan el espacio los átomos, o a <em>2 × 2 × 2</em> para ver la periodicidad.</li>
+      <li>Copie el enlace para compartir un material concreto.</li>
+    </ol>
+  </div>
+</dialog>
+
+<script src="data/materiales.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.5.5/3Dmol-min.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
