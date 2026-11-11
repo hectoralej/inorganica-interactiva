@@ -116,5 +116,6 @@ fraccionarias.
 - Datos: Materials Project, A. Jain et al., *APL Materials* **1**, 011002 (2013). Licencia CC BY 4.0.
 - Visor: [3Dmol.js](https://3dmol.csb.pitt.edu) (BSD-3), N. Rego y D. Koes, *Bioinformatics* **31**, 1322 (2015).
 - Idea inspirada en el curso *IA Aplicada a Ciencia de Materiales* (CeNAT y CNCA, 2026). No se reutiliza su código.
-- Autores: _(agregar nombres del grupo)_.
-- Licencia del código: _(elegir, por ejemplo MIT)_.
+- Curso: Química Inorgánica.
+- Autores: Gerald Blanco Ramírez, Hector Rojas Valdes y Kenneth Solís Morales.
+- Licencia del código: [MIT](LICENSE). Los datos de `data/` conservan la licencia CC BY 4.0 de Materials Project.
