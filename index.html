@@ -115,6 +115,7 @@
         <li><i class="k-s"></i>Semiconductor (0,1 a 3 eV)</li>
         <li><i class="k-a"></i>Aislante (&gt; 3 eV)</li>
       </ul>
+      <p class="nota">El fondo de las celdas de fórmula y bandgap usa el mismo color que las barras, para reconocer la clase aun cuando la barra es muy corta.</p>
     </div>
     <div class="tabla-wrap">
       <table id="tabla">
@@ -211,11 +212,67 @@
     <button class="btn btn-icono" aria-label="Cerrar">✕</button>
   </form>
   <div class="guia-cuerpo">
-    <h3>Bandgap (Eg)</h3>
-    <p>Es la diferencia de energía entre la banda de valencia (llena) y la de conducción (vacía). Un gap cercano a 0 sugiere un conductor; entre unas décimas y ~3 eV, un semiconductor; mayor que ~3 eV, un aislante o material de gap ancho. Determina qué luz absorbe el material y, por tanto, su color y sus usos (celdas solares, LED, catálisis fotoinducida).</p>
 
-    <h3 id="g-dft">⚠ Los valores son cálculos DFT</h3>
-    <p>Materials Project calcula el gap con DFT (aproximación GGA/PBE), un método que <strong>subestima sistemáticamente</strong> el gap. Compare con los valores experimentales aproximados:</p>
+    <div class="guia-aviso" role="note">
+      <p><strong>Antes de empezar:</strong></p>
+      <ul>
+        <li><strong>Es una muestra, no el catálogo completo.</strong> Se incluyen unos 2500 materiales de Materials Project (bandgap entre 0,05 y 10 eV y E hull ≤ 0,05 eV/átomo). Que un material no aparezca no significa que no exista.</li>
+        <li><strong>«Conductor» es solo una etiqueta por bandgap.</strong> No distingue metales de semimetales ni de materiales con un gap muy pequeño. Como la muestra parte de 0,05 eV, hay muy pocos conductores.</li>
+      </ul>
+    </div>
+
+    <h3>Cómo usarlo</h3>
+    <ol>
+      <li><strong>Empiece con un atajo.</strong> Los botones de <em>Atajos</em> aplican filtros ya preparados (por ejemplo, <em>Candidatos fotovoltaicos</em>). Pulse el mismo atajo otra vez para quitarlo.</li>
+      <li><strong>Afine con los filtros.</strong> Combine fórmula, elementos, bandgap, tipo de gap, estabilidad, sistema cristalino y origen. El contador de materiales y el histograma se actualizan al instante.</li>
+      <li><strong>Muestre u oculte los filtros.</strong> El panel <em>Filtros</em> se pliega y despliega pulsando su título, útil en pantallas pequeñas.</li>
+      <li><strong>Ordene la tabla.</strong> Pulse el título de una columna para ordenar; si hay muchos resultados, use <em>Mostrar más</em>.</li>
+      <li><strong>Vea la estructura 3D.</strong> Haga clic en una fila. Arrastre para girar, use la rueda o dos dedos para acercar, o active <em>Girar solo</em>.</li>
+      <li><strong>Cambie la vista.</strong> <em>Empaquetamiento (esferas)</em> muestra cómo llenan el espacio los átomos; <em>Solo enlaces</em> deja el esqueleto; <em>2 × 2 × 2</em> o <em>3 × 3 × 3</em> muestran la periodicidad del cristal. <em>Mostrar celda</em> dibuja la celda unitaria.</li>
+      <li><strong>Lleve los datos con usted.</strong> <em>Copiar enlace</em> comparte el material elegido, <em>Descargar CIF</em> guarda la estructura para abrirla en otros programas y <em>Ver en Materials Project</em> abre la ficha original.</li>
+    </ol>
+
+    <h3>Qué muestra el panel de detalle</h3>
+    <p>Al elegir un material aparece, junto al visor 3D:</p>
+    <ul class="guia-ul">
+      <li><strong>Leyenda de átomos:</strong> el color de cada elemento en el visor, con el número de átomos de la celda mostrada.</li>
+      <li><strong>Etiquetas:</strong> clase por bandgap, tipo de gap (directo o indirecto) y origen (observado experimentalmente o solo predicho).</li>
+      <li><strong>Datos:</strong> bandgap DFT, energía sobre el hull (eV/átomo), átomos en la celda, parámetros de red <em>a, b, c</em> (Å) y ángulos <em>α, β, γ</em> (°), e ID de Materials Project.</li>
+      <li><strong>Explicación:</strong> un texto breve que interpreta el sistema cristalino, el bandgap y la estabilidad de ese material.</li>
+    </ul>
+
+    <h3>Qué hace cada filtro</h3>
+    <dl class="guia-lista">
+      <dt>Atajos</dt>
+      <dd>Combinaciones listas para usar: <em>Candidatos fotovoltaicos</em> (gap directo de 1,1 a 1,8 eV), <em>Semiconductores</em> (0,5 a 3 eV), <em>Aislantes</em> (gap &gt; 4 eV), <em>Tipo perovskita ABX₃</em> (candidatos; no toda fórmula ABX₃ es perovskita), <em>Óxidos</em> y <em>Halogenuros</em>.</dd>
+      <dt>Fórmula o id</dt>
+      <dd>Busca por fórmula (SrTiO3) o por identificador de Materials Project (mp-5229).</dd>
+      <dt>Debe contener elementos</dt>
+      <dd>Deja solo los materiales que incluyen todos los elementos indicados (ej. Ti, O).</dd>
+      <dt>Excluir elementos</dt>
+      <dd>Descarta los materiales con cualquiera de esos elementos; útil para evitar elementos tóxicos (ej. Pb, Cd) o escasos.</dd>
+      <dt>Bandgap (eV)</dt>
+      <dd>Dos deslizadores, mínimo y máximo, para acotar el rango de gap.</dd>
+      <dt>Tipo de gap</dt>
+      <dd><em>Directo</em>: el electrón salta sin cambiar de momento, lo que favorece absorber y emitir luz (celdas solares, LED). <em>Indirecto</em>: el salto requiere un fonón, y la absorción óptica es más débil.</dd>
+      <dt>Energía sobre el hull máxima</dt>
+      <dd>Limita la inestabilidad termodinámica permitida. Con el valor mínimo solo quedan fases estables; subirlo incluye materiales metaestables.</dd>
+      <dt>Sistema cristalino</dt>
+      <dd>Casillas para quedarse solo con los sistemas elegidos (cúbico, tetragonal, hexagonal…).</dd>
+      <dt>Solo materiales observados experimentalmente</dt>
+      <dd>Excluye las estructuras puramente predichas por cálculo.</dd>
+      <dt>Restablecer filtros</dt>
+      <dd>Vuelve todo al estado inicial.</dd>
+    </dl>
+
+    <h3>Qué significan las columnas</h3>
+
+    <h4>Bandgap (Eg)</h4>
+    <p><strong>Colores:</strong> gris azulado = conductor, verde = semiconductor, azul índigo = aislante. Se usan en el histograma, en las barras de la tabla y, en tono muy suave, como fondo de las celdas de fórmula y bandgap, para que se reconozca la clase aunque la barra sea muy corta.</p>
+    <p>Es la diferencia de energía entre la banda de valencia (llena) y la de conducción (vacía). Se clasifica así: <strong>conductor</strong> (&lt; 0,1 eV), <strong>semiconductor</strong> (0,1 a 3 eV) y <strong>aislante</strong> (&gt; 3 eV). Determina qué luz absorbe el material y, por tanto, su color y sus usos (celdas solares, LED, catálisis fotoinducida).</p>
+
+    <h4 id="g-dft">⚠ Los valores son cálculos DFT</h4>
+    <p>Materials Project calcula el gap con DFT (aproximación GGA/PBE), un método que <strong>subestima sistemáticamente</strong> el gap experimental. Úselo para ver tendencias, no como valor absoluto final.</p>
     <table class="mini">
       <thead><tr><th>Material</th><th class="num">Eg DFT (PBE), eV</th><th class="num">Eg experimental, eV</th></tr></thead>
       <tbody>
@@ -225,24 +282,18 @@
         <tr><td>NaCl</td><td class="num">≈ 5,0</td><td class="num">≈ 8,5</td></tr>
       </tbody>
     </table>
-    <p>La <em>tendencia</em> entre materiales suele ser útil, pero el valor absoluto no. Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
+    <p>Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
 
-    <h3>Energía sobre el hull (E hull)</h3>
-    <p>Mide cuánta energía por átomo está por encima de la combinación más estable de las fases competidoras. 0 eV significa que el material es termodinámicamente estable; valores pequeños (hasta unas pocas decenas de meV) pueden ser metaestables y sintetizables.</p>
+    <h4>Energía sobre el hull (E hull)</h4>
+    <p>Mide la estabilidad termodinámica respecto a las fases competidoras, en <strong>eV por átomo</strong>. 0 eV significa estable; valores pequeños (decenas de meV por átomo) pueden ser metaestables y sintetizables.</p>
+    <p><strong>Ojo:</strong> estable no garantiza que se pueda sintetizar, ni metaestable que sea imposible. El hull es un cálculo termodinámico (DFT, con su propio error) y no considera la cinética ni las condiciones de síntesis.</p>
 
-    <h3>Sistema cristalino y grupo espacial</h3>
-    <p>El sistema (cúbico, tetragonal, hexagonal…) lo define la forma de la celda unitaria. El grupo espacial describe además todas las simetrías del cristal. La celda que verá es la <em>convencional</em>: los átomos de vértices y caras se comparten con celdas vecinas.</p>
+    <h4>Sistema cristalino y grupo espacial</h4>
+    <p>El sistema define la forma de la celda unitaria convencional y el grupo espacial describe todas las simetrías del cristal. En la celda convencional, los átomos de vértices y caras se comparten con celdas vecinas.</p>
+    <p><strong>Ejemplo:</strong> la fórmula NaCl indica 1 Na por cada 1 Cl, pero su celda cúbica convencional contiene 4 Na y 4 Cl, y en el visor se ven aún más esferas en los bordes porque los átomos de vértices y caras pertenecen también a las celdas vecinas. Las superceldas 2 × 2 × 2 y 3 × 3 × 3 se desactivan automáticamente cuando el material tiene tantos átomos que el visor iría muy lento.</p>
 
-    <h3>Origen: experimental o teórico</h3>
-    <p>«Experimental» indica que la estructura tiene un registro en bases de datos de cristales medidos (ICSD). «Teórico» significa que solo se ha predicho por cálculo, aún sin síntesis reportada en esas bases.</p>
-
-    <h3>Cómo usarlo</h3>
-    <ol>
-      <li>Pruebe un atajo (por ejemplo, <em>Candidatos fotovoltaicos</em>) o ajuste los filtros.</li>
-      <li>Haga clic en una fila para ver la estructura. Arrastre para girar, use la rueda o dos dedos para acercar.</li>
-      <li>Cambie a la vista de <em>Empaquetamiento</em> para ver cómo llenan el espacio los átomos, o a <em>2 × 2 × 2</em> para ver la periodicidad.</li>
-      <li>Copie el enlace para compartir un material concreto.</li>
-    </ol>
+    <h4>Origen: experimental o teórico</h4>
+    <p>«Experimental» indica que la estructura está registrada en ICSD (cristales medidos). «Teórico» significa que solo se ha predicho por cálculo.</p>
   </div>
 </dialog>
 

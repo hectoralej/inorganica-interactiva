@@ -19,6 +19,9 @@
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
   --radio: 8px;
+  --t-cond: color-mix(in srgb, var(--c-cond) 16%, transparent);
+  --t-semi: color-mix(in srgb, var(--c-semi) 16%, transparent);
+  --t-aisl: color-mix(in srgb, var(--c-aisl) 16%, transparent);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -185,6 +188,9 @@ tbody tr { cursor: pointer; border-top: 1px solid var(--linea); }
 tbody tr:first-child { border-top: 0; }
 tbody tr:hover { background: var(--hover); }
 tbody tr.sel { background: var(--acento-suave); box-shadow: inset 3px 0 0 var(--acento); }
+.g-cond { background-color: var(--t-cond); }
+.g-semi { background-color: var(--t-semi); }
+.g-aisl { background-color: var(--t-aisl); }
 .fila-btn {
   background: none; border: 0; padding: 4px 0; min-height: 28px; color: var(--ink); cursor: pointer;
   font: 700 1.08rem/1.2 var(--serif); text-align: left;
@@ -255,6 +261,14 @@ dialog::backdrop { background: rgba(10, 15, 16, .55); }
 .guia-cuerpo { padding: 6px 20px 20px; display: grid; gap: 8px; }
 .guia-cuerpo h3 { font: 700 1.05rem var(--serif); margin-top: 12px; }
 .guia-cuerpo p, .guia-cuerpo li { font-size: .92rem; color: var(--ink-2); }
+.guia-cuerpo h4 { font: 700 .95rem var(--serif); margin-top: 6px; }
+.guia-lista { display: grid; gap: 4px; margin: 0; }
+.guia-lista dt { font-weight: 700; font-size: .9rem; margin-top: 6px; }
+.guia-lista dd { margin: 0; font-size: .92rem; color: var(--ink-2); }
+.guia-aviso { background: var(--aviso-bg); color: var(--aviso-ink); border-radius: 8px; padding: 10px 14px; margin-top: 8px; }
+.guia-aviso p, .guia-aviso li { color: inherit; }
+.guia-aviso ul { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+.guia-ul { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
 .guia-cuerpo ol { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
 table.mini { font-size: .86rem; border: 1px solid var(--linea); border-radius: 6px; }
 table.mini th { position: static; }

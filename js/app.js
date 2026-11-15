@@ -135,11 +135,12 @@
     el.nota.textContent = `de ${DATA.length.toLocaleString('es')} en total`;
     el.vacio.hidden = visibles.length > 0;
     el.tabla.parentElement.hidden = visibles.length === 0;
+    const tipoGap = (g) => (g < 0.1 ? 'g-cond' : g < 3 ? 'g-semi' : 'g-aisl');
     const filas = visibles.slice(0, mostrados);
     el.tbody.innerHTML = filas.map((m) => `
       <tr data-id="${esc(m.id)}" class="${m.id === seleccionado ? 'sel' : ''}">
-        <td class="f"><button type="button" class="fila-btn" ${m.id === seleccionado ? 'aria-current="true"' : ''} aria-label="Ver ${esc(m.f)}, ${esc(m.id)}">${fmtF(m.f)}</button></td>
-        <td class="num"><span class="gcel"><span>${num(m.g)}</span><span class="gbar" aria-hidden="true"><i style="--w:${Math.min(100, (m.g / GMAX) * 100)}%;--c:${colorGap(m.g)}"></i></span></span></td>
+        <td class="f ${tipoGap(m.g)}"><button type="button" class="fila-btn" ${m.id === seleccionado ? 'aria-current="true"' : ''} aria-label="Ver ${esc(m.f)}, ${esc(m.id)}">${fmtF(m.f)}</button></td>
+        <td class="num ${tipoGap(m.g)}"><span class="gcel"><span>${num(m.g)}</span><span class="gbar" aria-hidden="true"><i style="--w:${Math.min(100, (m.g / GMAX) * 100)}%;--c:${colorGap(m.g)}"></i></span></span></td>
         <td>${m.d === 1 ? 'Directo' : m.d === 0 ? 'Indirecto' : '—'}</td>
         <td>${SIST[m.cs] || esc(m.cs)}</td>
         <td>${esc(m.sg || '—')}</td>
