@@ -213,15 +213,33 @@
   </form>
   <div class="guia-cuerpo">
 
+    <div class="guia-aviso" role="note">
+      <p><strong>Antes de empezar:</strong></p>
+      <ul>
+        <li><strong>Es una muestra, no el catálogo completo.</strong> Se incluyen unos 2500 materiales de Materials Project (bandgap entre 0,05 y 10 eV y E hull ≤ 0,05 eV/átomo). Que un material no aparezca no significa que no exista.</li>
+        <li><strong>«Conductor» es solo una etiqueta por bandgap.</strong> No distingue metales de semimetales ni de materiales con un gap muy pequeño. Como la muestra parte de 0,05 eV, hay muy pocos conductores.</li>
+      </ul>
+    </div>
+
     <h3>Cómo usarlo</h3>
     <ol>
       <li><strong>Empiece con un atajo.</strong> Los botones de <em>Atajos</em> aplican filtros ya preparados (por ejemplo, <em>Candidatos fotovoltaicos</em>). Pulse el mismo atajo otra vez para quitarlo.</li>
       <li><strong>Afine con los filtros.</strong> Combine fórmula, elementos, bandgap, tipo de gap, estabilidad, sistema cristalino y origen. El contador de materiales y el histograma se actualizan al instante.</li>
+      <li><strong>Muestre u oculte los filtros.</strong> El panel <em>Filtros</em> se pliega y despliega pulsando su título, útil en pantallas pequeñas.</li>
       <li><strong>Ordene la tabla.</strong> Pulse el título de una columna para ordenar; si hay muchos resultados, use <em>Mostrar más</em>.</li>
       <li><strong>Vea la estructura 3D.</strong> Haga clic en una fila. Arrastre para girar, use la rueda o dos dedos para acercar, o active <em>Girar solo</em>.</li>
       <li><strong>Cambie la vista.</strong> <em>Empaquetamiento (esferas)</em> muestra cómo llenan el espacio los átomos; <em>Solo enlaces</em> deja el esqueleto; <em>2 × 2 × 2</em> o <em>3 × 3 × 3</em> muestran la periodicidad del cristal. <em>Mostrar celda</em> dibuja la celda unitaria.</li>
       <li><strong>Lleve los datos con usted.</strong> <em>Copiar enlace</em> comparte el material elegido, <em>Descargar CIF</em> guarda la estructura para abrirla en otros programas y <em>Ver en Materials Project</em> abre la ficha original.</li>
     </ol>
+
+    <h3>Qué muestra el panel de detalle</h3>
+    <p>Al elegir un material aparece, junto al visor 3D:</p>
+    <ul class="guia-ul">
+      <li><strong>Leyenda de átomos:</strong> el color de cada elemento en el visor, con el número de átomos de la celda mostrada.</li>
+      <li><strong>Etiquetas:</strong> clase por bandgap, tipo de gap (directo o indirecto) y origen (observado experimentalmente o solo predicho).</li>
+      <li><strong>Datos:</strong> bandgap DFT, energía sobre el hull (eV/átomo), átomos en la celda, parámetros de red <em>a, b, c</em> (Å) y ángulos <em>α, β, γ</em> (°), e ID de Materials Project.</li>
+      <li><strong>Explicación:</strong> un texto breve que interpreta el sistema cristalino, el bandgap y la estabilidad de ese material.</li>
+    </ul>
 
     <h3>Qué hace cada filtro</h3>
     <dl class="guia-lista">
@@ -267,10 +285,12 @@
     <p>Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
 
     <h4>Energía sobre el hull (E hull)</h4>
-    <p>Mide la estabilidad termodinámica respecto a las fases competidoras. 0 eV significa estable; valores pequeños (decenas de meV por átomo) pueden ser metaestables y sintetizables.</p>
+    <p>Mide la estabilidad termodinámica respecto a las fases competidoras, en <strong>eV por átomo</strong>. 0 eV significa estable; valores pequeños (decenas de meV por átomo) pueden ser metaestables y sintetizables.</p>
+    <p><strong>Ojo:</strong> estable no garantiza que se pueda sintetizar, ni metaestable que sea imposible. El hull es un cálculo termodinámico (DFT, con su propio error) y no considera la cinética ni las condiciones de síntesis.</p>
 
     <h4>Sistema cristalino y grupo espacial</h4>
     <p>El sistema define la forma de la celda unitaria convencional y el grupo espacial describe todas las simetrías del cristal. En la celda convencional, los átomos de vértices y caras se comparten con celdas vecinas.</p>
+    <p><strong>Ejemplo:</strong> la fórmula NaCl indica 1 Na por cada 1 Cl, pero su celda cúbica convencional contiene 4 Na y 4 Cl, y en el visor se ven aún más esferas en los bordes porque los átomos de vértices y caras pertenecen también a las celdas vecinas. Las superceldas 2 × 2 × 2 y 3 × 3 × 3 se desactivan automáticamente cuando el material tiene tantos átomos que el visor iría muy lento.</p>
 
     <h4>Origen: experimental o teórico</h4>
     <p>«Experimental» indica que la estructura está registrada en ICSD (cristales medidos). «Teórico» significa que solo se ha predicho por cálculo.</p>
