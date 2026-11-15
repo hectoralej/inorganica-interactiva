@@ -4,7 +4,7 @@ Recurso educativo para el curso de Química Inorgánica. Permite **filtrar mater
 [Materials Project](https://next-gen.materialsproject.org) por bandgap, sistema cristalino, estabilidad y elementos,
 y **girar su estructura cristalina en 3D** (celda unitaria, supercelda y vista de empaquetamiento).
 
-Es una página estática (HTML + CSS + JavaScript): no necesita servidor, ni instalación, ni API key para usarla.
+Es una página estática (HTML + CSS + JavaScript): no necesita servidor, ni instalación, ni API key para usarla. Sí necesita **conexión a internet** para el visor 3D, porque 3Dmol.js se carga desde un CDN (`cdnjs.cloudflare.com`); sin internet la tabla y los filtros funcionan, pero el visor muestra un aviso.
 
 > **Datos incluidos:** 2500 materiales de Materials Project (versión 2026.09.28), generados con
 > `scripts/generar_datos.py`. Para cambiar la muestra, ver «Generar los datos reales» más abajo.
@@ -103,6 +103,10 @@ fraccionarias.
   no provienen de un cálculo de enlace.
 - «Tipo perovskita ABX₃» filtra por fórmula; no toda fórmula ABX₃ es una perovskita.
 - Materials Project cubre cristales: no incluye nanopartículas ni MOF en general.
+- **Es una muestra, no el catálogo completo.** Los ~2500 materiales se eligieron con bandgap de 0,05 a 10 eV y energía sobre el hull ≤ 0,05 eV/átomo. Que un material no aparezca no significa que no exista, y como el mínimo es 0,05 eV hay muy pocos conductores.
+- El control de «energía sobre el hull» llega hasta 0,1 eV/átomo, pero con los datos incluidos no hay materiales entre 0,05 y 0,1; ese tramo solo se llena si se regeneran los datos con `--ehull 0.1`.
+- «Conductor», «semiconductor» y «aislante» son etiquetas por bandgap (< 0,1, 0,1 a 3 y > 3 eV), no una clasificación física completa.
+- La energía sobre el hull es un cálculo termodinámico (DFT): estable no garantiza que se pueda sintetizar, ni metaestable que sea imposible.
 
 ## Cómo ampliarlo (próximas generaciones)
 
