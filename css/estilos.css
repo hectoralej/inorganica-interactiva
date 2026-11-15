@@ -19,9 +19,9 @@
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
   --radio: 8px;
-  --t-cond: rgba(120, 190, 140, .20);
-  --t-semi: rgba(120, 165, 215, .20);
-  --t-aisl: rgba(165, 140, 205, .18);
+  --t-cond: color-mix(in srgb, var(--c-cond) 16%, transparent);
+  --t-semi: color-mix(in srgb, var(--c-semi) 16%, transparent);
+  --t-aisl: color-mix(in srgb, var(--c-aisl) 16%, transparent);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -41,9 +41,6 @@
     --c-aisl: #8d9ee6;
     --aviso-bg: #2f2810;
     --aviso-ink: #f2dc9b;
-    --t-cond: rgba(110, 190, 140, .16);
-    --t-semi: rgba(110, 165, 225, .16);
-    --t-aisl: rgba(170, 145, 220, .16);
     color-scheme: dark;
   }
 }
