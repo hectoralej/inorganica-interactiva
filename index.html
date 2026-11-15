@@ -211,11 +211,48 @@
     <button class="btn btn-icono" aria-label="Cerrar">✕</button>
   </form>
   <div class="guia-cuerpo">
-    <h3>Bandgap (Eg)</h3>
-    <p>Es la diferencia de energía entre la banda de valencia (llena) y la de conducción (vacía). Un gap cercano a 0 sugiere un conductor; entre unas décimas y ~3 eV, un semiconductor; mayor que ~3 eV, un aislante o material de gap ancho. Determina qué luz absorbe el material y, por tanto, su color y sus usos (celdas solares, LED, catálisis fotoinducida).</p>
 
-    <h3 id="g-dft">⚠ Los valores son cálculos DFT</h3>
-    <p>Materials Project calcula el gap con DFT (aproximación GGA/PBE), un método que <strong>subestima sistemáticamente</strong> el gap. Compare con los valores experimentales aproximados:</p>
+    <h3>Cómo usarlo</h3>
+    <ol>
+      <li><strong>Empiece con un atajo.</strong> Los botones de <em>Atajos</em> aplican filtros ya preparados (por ejemplo, <em>Candidatos fotovoltaicos</em>). Pulse el mismo atajo otra vez para quitarlo.</li>
+      <li><strong>Afine con los filtros.</strong> Combine fórmula, elementos, bandgap, tipo de gap, estabilidad, sistema cristalino y origen. El contador de materiales y el histograma se actualizan al instante.</li>
+      <li><strong>Ordene la tabla.</strong> Pulse el título de una columna para ordenar; si hay muchos resultados, use <em>Mostrar más</em>.</li>
+      <li><strong>Vea la estructura 3D.</strong> Haga clic en una fila. Arrastre para girar, use la rueda o dos dedos para acercar, o active <em>Girar solo</em>.</li>
+      <li><strong>Cambie la vista.</strong> <em>Empaquetamiento (esferas)</em> muestra cómo llenan el espacio los átomos; <em>Solo enlaces</em> deja el esqueleto; <em>2 × 2 × 2</em> o <em>3 × 3 × 3</em> muestran la periodicidad del cristal. <em>Mostrar celda</em> dibuja la celda unitaria.</li>
+      <li><strong>Lleve los datos con usted.</strong> <em>Copiar enlace</em> comparte el material elegido, <em>Descargar CIF</em> guarda la estructura para abrirla en otros programas y <em>Ver en Materials Project</em> abre la ficha original.</li>
+    </ol>
+
+    <h3>Qué hace cada filtro</h3>
+    <dl class="guia-lista">
+      <dt>Atajos</dt>
+      <dd>Combinaciones listas para usar: <em>Candidatos fotovoltaicos</em> (gap directo de 1,1 a 1,8 eV), <em>Semiconductores</em> (0,5 a 3 eV), <em>Aislantes</em> (gap &gt; 4 eV), <em>Tipo perovskita ABX₃</em> (candidatos; no toda fórmula ABX₃ es perovskita), <em>Óxidos</em> y <em>Halogenuros</em>.</dd>
+      <dt>Fórmula o id</dt>
+      <dd>Busca por fórmula (SrTiO3) o por identificador de Materials Project (mp-5229).</dd>
+      <dt>Debe contener elementos</dt>
+      <dd>Deja solo los materiales que incluyen todos los elementos indicados (ej. Ti, O).</dd>
+      <dt>Excluir elementos</dt>
+      <dd>Descarta los materiales con cualquiera de esos elementos; útil para evitar elementos tóxicos (ej. Pb, Cd) o escasos.</dd>
+      <dt>Bandgap (eV)</dt>
+      <dd>Dos deslizadores, mínimo y máximo, para acotar el rango de gap.</dd>
+      <dt>Tipo de gap</dt>
+      <dd><em>Directo</em>: el electrón salta sin cambiar de momento, lo que favorece absorber y emitir luz (celdas solares, LED). <em>Indirecto</em>: el salto requiere un fonón, y la absorción óptica es más débil.</dd>
+      <dt>Energía sobre el hull máxima</dt>
+      <dd>Limita la inestabilidad termodinámica permitida. Con el valor mínimo solo quedan fases estables; subirlo incluye materiales metaestables.</dd>
+      <dt>Sistema cristalino</dt>
+      <dd>Casillas para quedarse solo con los sistemas elegidos (cúbico, tetragonal, hexagonal…).</dd>
+      <dt>Solo materiales observados experimentalmente</dt>
+      <dd>Excluye las estructuras puramente predichas por cálculo.</dd>
+      <dt>Restablecer filtros</dt>
+      <dd>Vuelve todo al estado inicial.</dd>
+    </dl>
+
+    <h3>Qué significan las columnas</h3>
+
+    <h4>Bandgap (Eg)</h4>
+    <p>Es la diferencia de energía entre la banda de valencia (llena) y la de conducción (vacía). Se clasifica así: <strong>conductor</strong> (&lt; 0,1 eV), <strong>semiconductor</strong> (0,1 a 3 eV) y <strong>aislante</strong> (&gt; 3 eV). Determina qué luz absorbe el material y, por tanto, su color y sus usos (celdas solares, LED, catálisis fotoinducida).</p>
+
+    <h4 id="g-dft">⚠ Los valores son cálculos DFT</h4>
+    <p>Materials Project calcula el gap con DFT (aproximación GGA/PBE), un método que <strong>subestima sistemáticamente</strong> el gap experimental. Úselo para ver tendencias, no como valor absoluto final.</p>
     <table class="mini">
       <thead><tr><th>Material</th><th class="num">Eg DFT (PBE), eV</th><th class="num">Eg experimental, eV</th></tr></thead>
       <tbody>
@@ -225,24 +262,16 @@
         <tr><td>NaCl</td><td class="num">≈ 5,0</td><td class="num">≈ 8,5</td></tr>
       </tbody>
     </table>
-    <p>La <em>tendencia</em> entre materiales suele ser útil, pero el valor absoluto no. Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
+    <p>Para un resultado fiable hay que ir a datos experimentales o a métodos más costosos (híbridos, GW).</p>
 
-    <h3>Energía sobre el hull (E hull)</h3>
-    <p>Mide cuánta energía por átomo está por encima de la combinación más estable de las fases competidoras. 0 eV significa que el material es termodinámicamente estable; valores pequeños (hasta unas pocas decenas de meV) pueden ser metaestables y sintetizables.</p>
+    <h4>Energía sobre el hull (E hull)</h4>
+    <p>Mide la estabilidad termodinámica respecto a las fases competidoras. 0 eV significa estable; valores pequeños (decenas de meV por átomo) pueden ser metaestables y sintetizables.</p>
 
-    <h3>Sistema cristalino y grupo espacial</h3>
-    <p>El sistema (cúbico, tetragonal, hexagonal…) lo define la forma de la celda unitaria. El grupo espacial describe además todas las simetrías del cristal. La celda que verá es la <em>convencional</em>: los átomos de vértices y caras se comparten con celdas vecinas.</p>
+    <h4>Sistema cristalino y grupo espacial</h4>
+    <p>El sistema define la forma de la celda unitaria convencional y el grupo espacial describe todas las simetrías del cristal. En la celda convencional, los átomos de vértices y caras se comparten con celdas vecinas.</p>
 
-    <h3>Origen: experimental o teórico</h3>
-    <p>«Experimental» indica que la estructura tiene un registro en bases de datos de cristales medidos (ICSD). «Teórico» significa que solo se ha predicho por cálculo, aún sin síntesis reportada en esas bases.</p>
-
-    <h3>Cómo usarlo</h3>
-    <ol>
-      <li>Pruebe un atajo (por ejemplo, <em>Candidatos fotovoltaicos</em>) o ajuste los filtros.</li>
-      <li>Haga clic en una fila para ver la estructura. Arrastre para girar, use la rueda o dos dedos para acercar.</li>
-      <li>Cambie a la vista de <em>Empaquetamiento</em> para ver cómo llenan el espacio los átomos, o a <em>2 × 2 × 2</em> para ver la periodicidad.</li>
-      <li>Copie el enlace para compartir un material concreto.</li>
-    </ol>
+    <h4>Origen: experimental o teórico</h4>
+    <p>«Experimental» indica que la estructura está registrada en ICSD (cristales medidos). «Teórico» significa que solo se ha predicho por cálculo.</p>
   </div>
 </dialog>
 
